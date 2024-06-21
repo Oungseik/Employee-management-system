@@ -7,7 +7,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      devShell = pkgs.mkShell {
+      devShell = pkgs.mkShellNoCC {
         buildInputs = with pkgs; [
           cargo-audit
           cargo-watch
