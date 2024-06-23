@@ -10,8 +10,9 @@
       devShell = pkgs.mkShellNoCC {
         buildInputs = with pkgs; [
           cargo-audit
-          cargo-watch
+          cargo-nextest
           cargo-tarpaulin
+          cargo-watch
 
           # optional dependencies to make RESTapi request from Neovim
           luajitPackages.lua-curl
@@ -21,6 +22,8 @@
           pkg-config
           openssl
         ];
+
+        STATIC_ASSETS_FOLDER = "static";
       };
     }
   );
