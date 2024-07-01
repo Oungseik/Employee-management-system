@@ -11,6 +11,7 @@
         buildInputs = with pkgs; [
           cargo-audit
           cargo-nextest
+          sqlx-cli
           cargo-tarpaulin
           cargo-watch
 
@@ -24,6 +25,8 @@
         ];
 
         STATIC_ASSETS_FOLDER = "static";
+        DATABASE_URL = "sqlite://database/db.sqlite";
+        RUSTUP_TOOLCHAIN="stable";
       };
     }
   );
