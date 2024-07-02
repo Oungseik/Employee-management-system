@@ -1,5 +1,4 @@
 use axum::Extension;
-use clap::Parser;
 use sqlx::migrate::MigrateDatabase;
 use sqlx::{Error, Pool, Sqlite, SqlitePool};
 use tokio::net::TcpListener;
@@ -12,7 +11,7 @@ mod middlewares;
 mod routers;
 mod utils;
 
-use crate::config::Config;
+use crate::config::get_config;
 use crate::routers::create_app;
 
 #[tokio::main]
@@ -23,7 +22,7 @@ async fn main() {
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
-    let config = Config::parse();
+    let config = get_config();
     let pool = setup_db(&config.database_url).await.unwrap();
     let app = create_app().layer(Extension(pool));
 
