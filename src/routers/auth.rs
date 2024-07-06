@@ -41,7 +41,7 @@ async fn register(
 struct RegisterBody {
     #[validate(length(min = 2, max = 64, message = "name must between 2-64 characters long"))]
     name: String,
-    #[validate(email(message = "Invalid email"), custom(function = validate_email_domain))]
+    #[validate(email(message = "Invalid email"), custom(function = validate_email_domain, message = "invalid email domain"))]
     email: String,
     #[validate(length(min = 8, max = 32, message = "Must be 8 - 32 characters long"), custom(function = validate_strong_password))]
     password: String,
