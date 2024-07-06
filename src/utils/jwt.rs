@@ -1,6 +1,8 @@
-use chrono::{Duration, Utc};
+use chrono::{TimeDelta, Utc};
 use jsonwebtoken::{encode, errors::Error, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
+
+use crate::config::get_config;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims<'a> {
@@ -8,19 +10,24 @@ struct Claims<'a> {
     exp: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct JwtData<'a> {
-    pub email: &'a str,
-}
-
-pub fn get_jwt(body: JwtData) -> Result<String, Error> {
-    // FIXME - use appropriate key
+pub fn get_auth_token(email: &str, duration: TimeDelta) -> Result<String, Error> {
     encode(
         &Header::default(),
         &Claims {
-            email: body.email,
-            exp: (Utc::now() + Duration::minutes(15)).timestamp(),
+            email,
+            exp: (Utc::now() + duration).timestamp(),
         },
-        &EncodingKey::from_secret("mykey".as_bytes()),
+        &EncodingKey::from_secret(get_config().auth_secret.as_bytes()),
+    )
+}
+
+pub fn get_refresh_toke(email: &str, duration: TimeDelta) -> Result<String, Error> {
+    encode(
+        &Header::default(),
+        &Claims {
+            email,
+            exp: (Utc::now() + duration).timestamp(),
+        },
+        &EncodingKey::from_secret(get_config().refresh_secret.as_bytes()),
     )
 }

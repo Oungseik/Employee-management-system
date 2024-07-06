@@ -6,6 +6,7 @@ use utoipa::OpenApi;
 use utoipa_scalar::{Scalar, Servable};
 
 pub mod auth;
+pub mod auth_schema;
 pub mod check_health;
 
 use crate::utils::api_doc::ApiDoc;

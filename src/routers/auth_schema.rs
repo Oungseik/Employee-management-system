@@ -30,3 +30,10 @@ fn validate_strong_password(password: &str) -> R<(), ValidationError> {
 
     Ok(())
 }
+
+#[derive(Debug, Deserialize, Validate)]
+pub struct LoginBody {
+    #[validate(email(message = "Invalid email"), custom(function = validate_email_domain, message = "invalid email domain"))]
+    pub email: String,
+    pub password: String,
+}

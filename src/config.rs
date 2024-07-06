@@ -9,9 +9,14 @@ pub struct Config {
     pub port: u16,
     #[clap(long, env, default_value = "")]
     pub email_domain: String,
+    #[clap(long, env)]
+    pub auth_secret: String,
+    #[clap(long, env)]
+    pub refresh_secret: String,
 }
 
 pub fn get_config() -> &'static Config {
+    dotenv::dotenv().ok();
     static CONFIG: OnceLock<Config> = OnceLock::new();
     CONFIG.get_or_init(|| Config::parse())
 }

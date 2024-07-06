@@ -9,6 +9,7 @@ axum-extra = { version = "0.9.3", features = ["typed-header"] }
 axum-valid = "0.18.0"
 chrono = "0.4.38"
 clap = { version = "4.5.7", features = ["derive", "env"] }
+dotenv = { version = "0.15.0", features = ["clap"] }
 jsonwebtoken = "9.3.0"
 password-auth = "1.0.0"
 serde = { version = "1.0.203", features = ["derive"] } 

@@ -8,6 +8,7 @@ use tracing_subscriber::EnvFilter;
 mod config;
 mod error;
 mod middlewares;
+mod modals;
 mod routers;
 mod utils;
 
