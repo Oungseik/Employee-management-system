@@ -1,51 +1,27 @@
-use std::error::Error;
-use std::fmt;
+use std::result::Result as R;
+use thiserror::Error;
 
 use axum::{http::StatusCode, response::IntoResponse};
 
-#[derive(Debug)]
-pub enum AuthError {
-    WrongCredentials,
-    MissingCredentials,
-    TokenCreation,
-    InvalidToken,
-    NotFound,
+pub type Result<T> = R<T, AppError>;
+
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("internal server error")]
+    InternalServerError,
+    #[error("{0}")]
+    EmailTaken(String),
 }
 
-impl Error for AuthError {}
-
-impl fmt::Display for AuthError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            AuthError::InvalidToken => write!(f, "client error: user provided invalid token"),
-            AuthError::MissingCredentials => {
-                write!(f, "client error: user does not provide the credentials")
-            }
-            AuthError::WrongCredentials => {
-                write!(f, "client error: user provided wrong credentials")
-            }
-            AuthError::TokenCreation => {
-                write!(f, "server error: error occured while creating the token")
-            }
-            AuthError::NotFound => {
-                write!(f, "user not found")
-            }
-        }
-    }
-}
-
-impl IntoResponse for AuthError {
+impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
         let body = match self {
-            AuthError::InvalidToken | AuthError::MissingCredentials => {
-                (StatusCode::UNAUTHORIZED, "invalid token")
-            }
-            AuthError::WrongCredentials => (StatusCode::FORBIDDEN, "wrong credential"),
-            AuthError::TokenCreation => (
+            AppError::InternalServerError => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                "error while create token",
+                "internal server error".to_string(),
             ),
-            AuthError::NotFound => (StatusCode::NOT_FOUND, "not found"),
+
+            AppError::EmailTaken(msg) => (StatusCode::CONFLICT, msg),
         };
         body.into_response()
     }
