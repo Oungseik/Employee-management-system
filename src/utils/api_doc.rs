@@ -1,7 +1,9 @@
 use utoipa::OpenApi;
+use utoipauto::utoipauto;
 
+#[utoipauto]
 #[derive(OpenApi)]
-#[openapi(paths(crate::routers::check_health::check_health), components())]
+#[openapi(tags(
+    (name = "Employee management", description = "Service to manage employees")
+))]
 pub struct ApiDoc;
-
-
