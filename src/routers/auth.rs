@@ -27,8 +27,8 @@ pub fn routes() -> Router {
         request_body = RegisterIn,
         responses(
             (status = 201, description = "create a user"),
-            (status = 409, description = "email already taken", body = AppError::EmailTaken),
-            (status = 500, description = "inernal server error", body = AppError::InternalServerError),
+            (status = 409, description = "email already taken", body = EmailTakenError),
+            (status = 500, description = "inernal server error", body = InternalServerError),
         ),
         tag = "Authentication",
     )]
@@ -50,7 +50,7 @@ async fn register(
         sqlx::Error::Database(err) if err.is_unique_violation() => {
             AppError::EmailTaken("email already taken".to_string())
         }
-        _ => AppError::InternalServerError,
+        _ => AppError::InternalServerError("internal server error".to_string()),
     })?;
 
     Ok((StatusCode::CREATED, ()))
@@ -62,9 +62,9 @@ async fn register(
         request_body = LoginIn,
         responses(
             (status = 200, description = "successfully login", body = LoginOut),
-            (status = 401, description = "password does not match", body = AppError::Unauthorized),
-            (status = 404, description = "email does not exist", body = AppError::NotFound),
-            (status = 500, description = "inernal server error", body = AppError::InternalServerError),
+            (status = 401, description = "password does not match", body = UnauthorizedError),
+            (status = 404, description = "email does not exist", body = NotFoundError),
+            (status = 500, description = "inernal server error", body = InternalServerError),
         ),
         tag = "Authentication",
     )]
@@ -81,7 +81,7 @@ async fn login(
     .await
     .map_err(|err| match err {
         sqlx::Error::RowNotFound => AppError::NotFound("user does not exist".to_string()),
-        _ => AppError::InternalServerError,
+        _ => AppError::InternalServerError("internal server error".to_string()),
     })?;
 
     verify_password(body.password, &employee.password)
