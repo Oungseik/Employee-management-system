@@ -13,6 +13,8 @@ pub struct Config {
     pub auth_secret: String,
     #[clap(long, env)]
     pub token_duration: i64,
+    #[clap(long, env)]
+    pub cookies_signed_key: String,
 }
 
 pub fn get_config() -> &'static Config {

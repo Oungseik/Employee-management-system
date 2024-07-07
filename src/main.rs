@@ -5,8 +5,7 @@ mod modals;
 mod routers;
 mod utils;
 
-use crate::config::get_config;
-use crate::routers::create_app;
+use crate::{config::get_config, routers::create_app};
 
 use axum::Extension;
 use sqlx::migrate::MigrateDatabase;

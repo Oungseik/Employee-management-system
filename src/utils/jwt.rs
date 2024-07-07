@@ -1,9 +1,7 @@
 use crate::config::get_config;
 
 use chrono::{TimeDelta, Utc};
-use jsonwebtoken::{
-    decode, encode, errors::Error, Algorithm, DecodingKey, EncodingKey, Header, Validation,
-};
+use jsonwebtoken::{decode, encode, errors::Error, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -25,14 +23,14 @@ pub fn encode_auth_token(email: &str, name: &str, duration: TimeDelta) -> Result
     )
 }
 
-#[derive(Debug, Deserialize)]
-struct DecodeData {
-    email: String,
-    name: String,
+#[derive(Clone, Deserialize)]
+pub struct DecodePayload {
+    pub email: String,
+    pub name: String,
 }
 
-pub fn decode_auth_token(token: &str) -> Result<DecodeData, Error> {
-    decode::<DecodeData>(
+pub fn decode_auth_token(token: &str) -> Result<DecodePayload, Error> {
+    decode::<DecodePayload>(
         token,
         &DecodingKey::from_secret(get_config().auth_secret.as_bytes()),
         &Validation::default(),
