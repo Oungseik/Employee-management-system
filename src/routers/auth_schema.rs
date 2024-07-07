@@ -42,5 +42,4 @@ pub struct LoginIn {
 #[derive(Debug, Serialize, ToSchema)]
 pub struct LoginOut {
     pub auth_token: String,
-    pub refresh_token: String,
 }

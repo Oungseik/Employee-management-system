@@ -1,7 +1,7 @@
 use super::auth_schema::{LoginIn, LoginOut, RegisterIn};
 use crate::error::{AppError, Result};
 use crate::modals::employee::Employee;
-use crate::utils::jwt::{get_auth_token, get_refresh_toke};
+use crate::utils::jwt::encode_auth_token;
 
 use axum::http::StatusCode;
 use axum::{response::IntoResponse, routing::post, Extension, Json, Router};
@@ -9,11 +9,6 @@ use axum_valid::Valid;
 use chrono::Duration;
 use password_auth::{generate_hash, verify_password};
 use sqlx::{Pool, Sqlite};
-
-// use utoipa::OpenApi;
-// #[derive(OpenApi)]
-// #[openapi(paths(login), components(schemas(LoginIn, LoginOut)))]
-// pub struct AuthApi;
 
 pub fn routes() -> Router {
     Router::new()
@@ -87,11 +82,8 @@ async fn login(
     verify_password(body.password, &employee.password)
         .map_err(|_| AppError::Unauthorized("password does not match".to_string()))?;
 
-    let auth_token = get_auth_token(&body.email, Duration::minutes(15)).unwrap();
-    let refresh_token = get_refresh_toke(&body.email, Duration::days(30)).unwrap();
+    let auth_token =
+        encode_auth_token(&employee.email, &employee.name, Duration::minutes(15)).unwrap();
 
-    Ok(Json(LoginOut {
-        auth_token,
-        refresh_token,
-    }))
+    Ok(Json(LoginOut { auth_token }))
 }
