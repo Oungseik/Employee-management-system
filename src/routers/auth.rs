@@ -1,14 +1,19 @@
-use axum::{routing::post, Extension, Json, Router};
+use axum::http::StatusCode;
+use axum::{response::IntoResponse, routing::post, Extension, Json, Router};
 use axum_valid::Valid;
 use chrono::Duration;
 use password_auth::{generate_hash, verify_password};
-use serde::Serialize;
 use sqlx::{Pool, Sqlite};
 
-use super::auth_schema::{LoginBody, RegisterBody};
+use super::auth_schema::{LoginIn, LoginOut, RegisterIn};
 use crate::error::{AppError, Result};
 use crate::modals::employee::Employee;
 use crate::utils::jwt::{get_auth_token, get_refresh_toke};
+
+// use utoipa::OpenApi;
+// #[derive(OpenApi)]
+// #[openapi(paths(login), components(schemas(LoginIn, LoginOut)))]
+// pub struct AuthApi;
 
 pub fn routes() -> Router {
     Router::new()
@@ -16,10 +21,21 @@ pub fn routes() -> Router {
         .route("/login", post(login))
 }
 
+#[utoipa::path(
+        post,
+        path = "/api/v1/register",
+        request_body = RegisterIn,
+        responses(
+            (status = 201, description = "create a user"),
+            (status = 409, description = "email already taken", body = AppError::EmailTaken),
+            (status = 500, description = "inernal server error", body = AppError::InternalServerError),
+        ),
+        tag = "Authentication",
+    )]
 async fn register(
     Extension(pool): Extension<Pool<Sqlite>>,
-    Valid(Json(body)): Valid<Json<RegisterBody>>,
-) -> Result<()> {
+    Valid(Json(body)): Valid<Json<RegisterIn>>,
+) -> Result<impl IntoResponse> {
     let hash = generate_hash(body.password);
 
     sqlx::query!(
@@ -32,17 +48,29 @@ async fn register(
     .await
     .map_err(|err| match err {
         sqlx::Error::Database(err) if err.is_unique_violation() => {
-            AppError::EmailTaken("email already exist".to_string())
+            AppError::EmailTaken("email already taken".to_string())
         }
         _ => AppError::InternalServerError,
     })?;
 
-    Ok(())
+    Ok((StatusCode::CREATED, ()))
 }
 
+#[utoipa::path(
+        post,
+        path = "/api/v1/login",
+        request_body = LoginIn,
+        responses(
+            (status = 200, description = "successfully login", body = LoginOut),
+            (status = 401, description = "password does not match", body = AppError::Unauthorized),
+            (status = 404, description = "email does not exist", body = AppError::NotFound),
+            (status = 500, description = "inernal server error", body = AppError::InternalServerError),
+        ),
+        tag = "Authentication",
+    )]
 async fn login(
     Extension(pool): Extension<Pool<Sqlite>>,
-    Valid(Json(body)): Valid<Json<LoginBody>>,
+    Valid(Json(body)): Valid<Json<LoginIn>>,
 ) -> Result<Json<LoginOut>> {
     let employee = sqlx::query_as!(
         Employee,
@@ -66,10 +94,4 @@ async fn login(
         auth_token,
         refresh_token,
     }))
-}
-
-#[derive(Debug, Serialize)]
-struct LoginOut {
-    auth_token: String,
-    refresh_token: String,
 }

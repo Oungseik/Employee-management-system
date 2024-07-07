@@ -1,11 +1,12 @@
 use crate::config::get_config;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::result::Result as R;
+use utoipa::ToSchema;
 use validator::{Validate, ValidationError};
 
 #[derive(Debug, Deserialize, Validate)]
-pub struct RegisterBody {
+pub struct RegisterIn {
     #[validate(length(min = 2, max = 64, message = "name must between 2-64 characters long"))]
     pub name: String,
     #[validate(email(message = "Invalid email"), custom(function = validate_email_domain, message = "invalid email domain"))]
@@ -31,9 +32,15 @@ fn validate_strong_password(password: &str) -> R<(), ValidationError> {
     Ok(())
 }
 
-#[derive(Debug, Deserialize, Validate)]
-pub struct LoginBody {
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct LoginIn {
     #[validate(email(message = "Invalid email"), custom(function = validate_email_domain, message = "invalid email domain"))]
     pub email: String,
     pub password: String,
+}
+
+#[derive(Debug, Serialize, ToSchema)]
+pub struct LoginOut {
+    pub auth_token: String,
+    pub refresh_token: String,
 }

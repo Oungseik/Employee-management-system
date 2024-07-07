@@ -3,7 +3,9 @@ use utoipauto::utoipauto;
 
 #[utoipauto]
 #[derive(OpenApi)]
-#[openapi(tags(
+#[openapi(
+    components(),
+    tags(
     (name = "Employee management", description = "Service to manage employees")
 ))]
 pub struct ApiDoc;
