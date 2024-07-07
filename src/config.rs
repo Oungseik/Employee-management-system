@@ -11,6 +11,8 @@ pub struct Config {
     pub email_domain: String,
     #[clap(long, env)]
     pub auth_secret: String,
+    #[clap(long, env)]
+    pub token_duration: i64,
 }
 
 pub fn get_config() -> &'static Config {

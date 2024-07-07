@@ -1,6 +1,7 @@
-use super::auth_schema::{LoginIn, LoginOut, RegisterIn};
+use crate::config::get_config;
 use crate::error::{AppError, Result};
 use crate::modals::employee::Employee;
+use crate::routers::auth_schema::{LoginIn, LoginOut, RegisterIn};
 use crate::utils::jwt::encode_auth_token;
 
 use axum::http::StatusCode;
@@ -82,8 +83,12 @@ async fn login(
     verify_password(body.password, &employee.password)
         .map_err(|_| AppError::Unauthorized("password does not match".to_string()))?;
 
-    let auth_token =
-        encode_auth_token(&employee.email, &employee.name, Duration::minutes(15)).unwrap();
+    let auth_token = encode_auth_token(
+        &employee.email,
+        &employee.name,
+        Duration::seconds(get_config().token_duration),
+    )
+    .unwrap();
 
     Ok(Json(LoginOut { auth_token }))
 }
