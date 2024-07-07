@@ -1,15 +1,15 @@
+pub mod auth;
+pub mod auth_schema;
+pub mod check_health;
+
+use crate::utils::api_doc::ApiDoc;
+
 use axum::http::Method;
 use axum::{routing::get_service, Router};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
 use utoipa::OpenApi;
 use utoipa_scalar::{Scalar, Servable};
-
-pub mod auth;
-pub mod auth_schema;
-pub mod check_health;
-
-use crate::utils::api_doc::ApiDoc;
 
 pub fn create_app() -> Router {
     let cors = CorsLayer::new()

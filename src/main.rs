@@ -1,10 +1,3 @@
-use axum::Extension;
-use sqlx::migrate::MigrateDatabase;
-use sqlx::{Error, Pool, Sqlite, SqlitePool};
-use tokio::net::TcpListener;
-use tracing::{info, warn};
-use tracing_subscriber::EnvFilter;
-
 mod config;
 mod error;
 mod middlewares;
@@ -14,6 +7,13 @@ mod utils;
 
 use crate::config::get_config;
 use crate::routers::create_app;
+
+use axum::Extension;
+use sqlx::migrate::MigrateDatabase;
+use sqlx::{Error, Pool, Sqlite, SqlitePool};
+use tokio::net::TcpListener;
+use tracing::{info, warn};
+use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
 async fn main() {

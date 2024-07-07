@@ -1,14 +1,14 @@
+use super::auth_schema::{LoginIn, LoginOut, RegisterIn};
+use crate::error::{AppError, Result};
+use crate::modals::employee::Employee;
+use crate::utils::jwt::{get_auth_token, get_refresh_toke};
+
 use axum::http::StatusCode;
 use axum::{response::IntoResponse, routing::post, Extension, Json, Router};
 use axum_valid::Valid;
 use chrono::Duration;
 use password_auth::{generate_hash, verify_password};
 use sqlx::{Pool, Sqlite};
-
-use super::auth_schema::{LoginIn, LoginOut, RegisterIn};
-use crate::error::{AppError, Result};
-use crate::modals::employee::Employee;
-use crate::utils::jwt::{get_auth_token, get_refresh_toke};
 
 // use utoipa::OpenApi;
 // #[derive(OpenApi)]

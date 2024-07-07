@@ -1,7 +1,6 @@
+use axum::{http::StatusCode, response::IntoResponse};
 use std::result::Result as R;
 use thiserror::Error;
-
-use axum::{http::StatusCode, response::IntoResponse};
 
 pub type Result<T> = R<T, AppError>;
 

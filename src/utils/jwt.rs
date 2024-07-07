@@ -1,8 +1,8 @@
+use crate::config::get_config;
+
 use chrono::{TimeDelta, Utc};
 use jsonwebtoken::{encode, errors::Error, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
-
-use crate::config::get_config;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims<'a> {
