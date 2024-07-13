@@ -21,7 +21,7 @@ pub fn routes() -> Router {
 
 #[utoipa::path(
         post,
-        path = "/api/v1/register",
+        path = "/api/v1/auth/register",
         request_body = RegisterIn,
         responses(
             (status = 201, description = "create a user"),
@@ -56,7 +56,7 @@ async fn register(
 
 #[utoipa::path(
         post,
-        path = "/api/v1/login",
+        path = "/api/v1/auth/login",
         request_body = LoginIn,
         responses(
             (status = 200, description = "successfully login", body = LoginOut),
