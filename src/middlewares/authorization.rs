@@ -1,6 +1,7 @@
 use crate::{
     config::get_config,
     error::{AppError, Result},
+    modals::employee::Employee,
     utils::jwt::decode_auth_token,
 };
 
@@ -10,6 +11,7 @@ use axum_extra::{
     headers::{authorization::Bearer, Authorization, HeaderMapExt},
 };
 use jsonwebtoken::errors::ErrorKind;
+use sqlx::{Pool, Sqlite};
 
 pub async fn mw_authorization(mut req: Request, next: Next) -> Result<Response<Body>> {
     let signed_key = Key::from(get_config().cookies_signed_key.as_bytes());
@@ -32,6 +34,22 @@ pub async fn mw_authorization(mut req: Request, next: Next) -> Result<Response<B
         _ => AppError::Unauthorized("invalid token".to_string()),
     })?;
 
-    req.extensions_mut().insert(claim);
+    let pool = req
+        .extensions()
+        .get::<Pool<Sqlite>>()
+        .ok_or(AppError::InternalServerError(
+            "something went wrong".to_string(),
+        ))?;
+
+    let employee = sqlx::query_as!(
+        Employee,
+        "SELECT * FROM employee WHERE email = $1",
+        claim.email
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap();
+
+    req.extensions_mut().insert(employee);
     Ok(next.run(req).await)
 }
