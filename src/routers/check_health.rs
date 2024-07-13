@@ -7,7 +7,9 @@ pub fn routes() -> Router {
 
 #[utoipa::path(get, path = "/check-health", responses(
     (status = 200, description = "server is up and running"),
-))]
+),
+    tag = "Check Health",
+)]
 async fn check_health<'a>() -> &'static str {
     debug!("GET /check-health");
     "server is up and running"
