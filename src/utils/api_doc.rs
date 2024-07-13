@@ -16,7 +16,7 @@ impl Modify for SecurityAddon {
         if let Some(component) = openapi.components.as_mut() {
             component.add_security_scheme(
                 "Authorization",
-                SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("Authorization Header"))),
+                SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("Authorization"))),
             );
 
             component.add_security_scheme(
