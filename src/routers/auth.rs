@@ -1,8 +1,10 @@
-use crate::config::get_config;
-use crate::error::{AppError, Result};
-use crate::modals::employee::Employee;
-use crate::routers::auth_schema::{LoginIn, LoginOut, RegisterIn};
-use crate::utils::jwt::encode_auth_token;
+use crate::{
+    config::get_config,
+    error::{AppError, Result},
+    modals::employee::Employee,
+    routers::auth_schema::{LoginIn, LoginOut, RegisterIn},
+    utils::jwt::encode_auth_token,
+};
 
 use axum::http::StatusCode;
 use axum::{response::IntoResponse, routing::post, Extension, Json, Router};
