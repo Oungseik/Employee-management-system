@@ -24,13 +24,13 @@ pub fn encode_auth_token(email: &str, name: &str, duration: TimeDelta) -> Result
 }
 
 #[derive(Clone, Deserialize)]
-pub struct DecodePayload {
+pub struct JwtPayload {
     pub email: String,
     pub name: String,
 }
 
-pub fn decode_auth_token(token: &str) -> Result<DecodePayload, Error> {
-    decode::<DecodePayload>(
+pub fn decode_auth_token(token: &str) -> Result<JwtPayload, Error> {
+    decode::<JwtPayload>(
         token,
         &DecodingKey::from_secret(get_config().auth_secret.as_bytes()),
         &Validation::default(),

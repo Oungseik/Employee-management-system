@@ -5,7 +5,7 @@ use std::result::Result as R;
 use utoipa::ToSchema;
 use validator::{Validate, ValidationError};
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct RegisterIn {
     #[validate(length(min = 2, max = 64, message = "name must between 2-64 characters long"))]
     pub name: String,
