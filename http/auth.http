@@ -1,7 +1,0 @@
-POST http://127.0.0.1:8989/api/v1/auth/register
-Content-Type: application/json
-
-{
-  "email": "oung@gmail.com",
-  "password": "1234567"
-}
